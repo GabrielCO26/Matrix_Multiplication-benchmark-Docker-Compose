@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  matrix_multiplication-benchmark:
+    image: alpine:latest
+    container_name: matrix_multiplication-benchmark
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: >
+      sh -c "
+      apk add --no-cache bash git docker-cli && 
+      git clone https://github.com/GabrielCO26/Matrix_Multiplication-benchmark.git && 
+      mkdir -p resultados && 
+      docker pull gacoco/activity2:ipython && 
+      docker pull gacoco/activity2:ijas && 
+      docker pull gacoco/activity2:icpp && 
+      docker pull gacoco/activity2:ijav && 
+      docker pull gacoco/activity2:irustt && 
+      docker run --rm gacoco/activity2:ipython > resultados/resultadoPy.txt && 
+      docker run --rm gacoco/activity2:ijas > resultados/resultadoJs.txt && 
+      docker run --rm gacoco/activity2:ijav > resultados/resultadoJava.txt && 
+      docker run --rm gacoco/activity2:icpp > resultados/resultadoCpp.txt && 
+      docker run --rm gacoco/activity2:irustt > resultados/resultadoRs.txt && 
+      cat resultados/resultadoPy.txt resultados/resultadoJs.txt resultados/resultadoCpp.txt resultados/resultadoJava.txt resultados/resultadoRs.txt > resultados/resultados.txt &&
+      mv resultados/resultados.txt . &&
+      rm -rf resultados Matrix_Multiplication-benchmark &&
+      docker rm -f $(docker ps -aq) &&
+      docker rmi $(docker images -q)
+      "
